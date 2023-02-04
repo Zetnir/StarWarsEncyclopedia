@@ -1,5 +1,4 @@
-//@flow
-
+import { gql, useQuery } from "@apollo/client";
 import {
   faSortAmountDown,
   faSortAmountUp,
@@ -17,10 +16,9 @@ import {
 } from "react-native";
 import EpisodeCard from "../components/EpisodeCard";
 import { episodeData } from "../constants";
+import filmListQuery from "../queries/filmListQuery";
 
-const data = episodeData;
-
-const EpisodeTab = ({}) => {
+const EpisodeTab = ({ navigation }) => {
   const [episodeOrder, setEpisodeOrder] = useState("DESC");
 
   const toggleOrder = () => {
@@ -33,50 +31,59 @@ const EpisodeTab = ({}) => {
     return episodeOrder === "DESC" ? dateA <= dateB : dateA > dateB;
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-        <Text style={styles.title}>Star wars movies </Text>
-        <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-      </View>
-      <View style={styles.centeredContainer}>
-        <View style={styles.episodeContainer}>
-          <TouchableOpacity
-            style={styles.sortButton}
-            onPress={() => {
-              toggleOrder();
-            }}
-          >
-            <FontAwesomeIcon
-              icon={episodeOrder === "ASC" ? faSortAmountUp : faSortAmountDown}
+  const { error, data, loading } = useQuery(filmListQuery);
+  if (data && !loading) {
+    const episodeData = [...data.allFilms.films];
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
+          <Text style={styles.title}>Star wars movies</Text>
+          <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
+        </View>
+        <View style={styles.centeredContainer}>
+          <View style={styles.episodeContainer}>
+            <TouchableOpacity
+              style={styles.sortButton}
+              onPress={() => {
+                toggleOrder();
+              }}
+            >
+              <FontAwesomeIcon
+                icon={
+                  episodeOrder === "ASC" ? faSortAmountUp : faSortAmountDown
+                }
+              />
+              <Text> Sort by Release date</Text>
+            </TouchableOpacity>
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={episodeData.sort((a, b) =>
+                sortByReleaseData(a.releaseDate, b.releaseDate)
+              )}
+              contentContainerStyle={styles.episodeList}
+              style={styles.episodeList}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <EpisodeCard
+                    title={item.title}
+                    releaseDate={item.releaseDate}
+                    characters={item.characterConnection.characters}
+                    navigation={navigation}
+                  />
+                );
+              }}
             />
-            <Text> Sort by Release date</Text>
-          </TouchableOpacity>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={data.sort((a, b) =>
-              sortByReleaseData(a.releaseDate, b.releaseDate)
-            )}
-            contentContainerStyle={{ height: 400 }}
-            style={{ height: 400 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              return (
-                <EpisodeCard
-                  title={item.title}
-                  releaseDate={item.releaseDate}
-                  imageUrl={item.image_url}
-                  characters={item.characters}
-                />
-              );
-            }}
-          />
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
 const styles = StyleSheet.create({
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
     color: "lightblue",
   },
   container: {
-    height: "100%",
+    height: "95%",
   },
   itemText: {
     color: "black",
@@ -103,7 +110,10 @@ const styles = StyleSheet.create({
   episodeContainer: {
     flex: 1,
     flexDirection: "column",
-    height: 450,
+    height: "100%",
+  },
+  episodeList: {
+    height: "100%",
   },
   centeredContainer: {
     flex: 1,
@@ -112,13 +122,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   sortButton: {
-    flex: 1,
     flexDirection: "row",
     marginLeft: 10,
     justifyContent: "center",
     backgroundColor: "lightblue",
     width: 200,
     padding: 10,
+    marginTop: 20,
     borderRadius: 10,
   },
 });

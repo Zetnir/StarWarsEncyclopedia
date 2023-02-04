@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import EpisodeTab from "../tabs/EpisodeTab";
-import CharacterLinkTab from "../tabs/CharacterLinkTab";
+import CharacterLikedTab from "../tabs/CharacterLikedTab";
 import HomeTabNavigation from "../navigations/HomeTabNavigator";
 
 const HomeScreen = ({ navigation }) => {

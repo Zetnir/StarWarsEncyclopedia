@@ -1,18 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const MovieScreen = ({}) => {
+const MovieScreen = ({ navigation, route }) => {
+  console.log(route);
   return (
-    <View>
-      <Text style={styles.title}>This is Movie Screen</Text>
+    <View style={styles.titleContainer}>
+      <Text style={styles.title}>{route.params.title}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   title: {
-    fontSize: 30,
+    fontSize: 25,
     textAlign: "center",
+    fontWeight: "500",
   },
 });
 
