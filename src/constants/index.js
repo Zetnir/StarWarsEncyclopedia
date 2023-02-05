@@ -1,3 +1,4 @@
-import { episodeData } from "./data";
+import { movieImages } from "./data";
+import { COLORS } from "./colors";
 
-export { episodeData };
+export { movieImages, COLORS };

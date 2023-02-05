@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
+import { COLORS } from "../constants";
 
 const CharacterCard = ({ name, navigation, id }) => {
   const onCardPressed = () => {
@@ -30,21 +31,21 @@ const CharacterCard = ({ name, navigation, id }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 30,
+    fontSize: 25,
     marginVertical: 20,
-    marginLeft: 20,
+    marginHorizontal: 10,
     color: "white",
   },
   item: {
     borderRadius: 10,
     marginHorizontal: 10,
     marginVertical: 10,
-    height: 200,
-    width: 300,
+    height: 120,
+    width: 250,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    backgroundColor: "lightblue",
+    backgroundColor: COLORS.primaryBgColor,
   },
   date: {
     marginLeft: 50,

@@ -15,10 +15,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import EpisodeCard from "../components/EpisodeCard";
-import Loader from "../components/Loader";
-import { episodeData } from "../constants";
-import movieListQuery from "../queries/movieListQuery";
+import EpisodeCard from "../../components/EpisodeCard";
+import Loader from "../../components/Loader";
+import { COLORS, episodeData, movieImages } from "../../constants";
+import movieListQuery from "../../queries/movieListQuery";
 
 const EpisodeTab = ({ navigation }) => {
   const LOADING_COUNT = 10;
@@ -29,8 +29,8 @@ const EpisodeTab = ({ navigation }) => {
   };
 
   const sortByReleaseData = (a, b) => {
-    const dateA = a.replaceAll("-", "");
-    const dateB = b.replaceAll("-", "");
+    const dateA = a.replace("-", "");
+    const dateB = b.replace("-", "");
     return episodeOrder === "DESC" ? dateA <= dateB : dateA > dateB;
   };
 
@@ -46,7 +46,7 @@ const EpisodeTab = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-        <Text style={styles.title}>Star wars movies</Text>
+        <Text style={styles.title}>STAR WARS Movies</Text>
         <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
       </View>
       <View style={styles.centeredContainer}>
@@ -58,9 +58,13 @@ const EpisodeTab = ({ navigation }) => {
             }}
           >
             <FontAwesomeIcon
+              color={COLORS.primaryTextColor}
               icon={episodeOrder === "ASC" ? faSortAmountUp : faSortAmountDown}
             />
-            <Text> Sort by Release date</Text>
+            <Text style={{ color: COLORS.primaryTextColor }}>
+              {" "}
+              Sort by Release date
+            </Text>
           </TouchableOpacity>
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -69,6 +73,9 @@ const EpisodeTab = ({ navigation }) => {
             )}
             keyExtractor={(item) => item.node.id}
             renderItem={({ item }) => {
+              const movie = movieImages.find(
+                (movie) => movie.id == item.node.id
+              );
               return (
                 <EpisodeCard
                   title={item.node.title}
@@ -76,6 +83,7 @@ const EpisodeTab = ({ navigation }) => {
                   releaseDate={item.node.releaseDate}
                   openingCrawl={item.node.openingCrawl}
                   navigation={navigation}
+                  image={movie.image}
                 />
               );
             }}
@@ -101,9 +109,11 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlign: "center",
     fontWeight: "500",
+    color: COLORS.primaryColor,
   },
   stars: {
-    color: "lightblue",
+    color: COLORS.primaryColor,
+    marginHorizontal: 5,
   },
   container: {
     height: "95%",
@@ -124,13 +134,10 @@ const styles = StyleSheet.create({
   },
   sortButton: {
     flexDirection: "row",
-    marginLeft: 10,
     justifyContent: "center",
-    backgroundColor: "lightblue",
     width: 200,
     padding: 10,
     marginTop: 20,
-    borderRadius: 10,
   },
 });
 
