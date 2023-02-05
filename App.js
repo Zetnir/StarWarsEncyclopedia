@@ -6,14 +6,25 @@ import HomeScreen from "./src/screens/HomeScreen";
 import CharacterScreen from "./src/screens/CharacterScreen";
 import MovieScreen from "./src/screens/MovieScreen";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { relayStylePagination } from "@apollo/client/utilities";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
 
 // Initialize Apollo Client
+const cache = new InMemoryCache({
+  typePolicies: {
+    Film: {
+      fields: {
+        characterConnection: relayStylePagination(),
+      },
+    },
+  },
+});
+
 const client = new ApolloClient({
   uri: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 export default function App() {

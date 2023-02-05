@@ -13,12 +13,15 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import EpisodeCard from "../components/EpisodeCard";
+import Loader from "../components/Loader";
 import { episodeData } from "../constants";
-import filmListQuery from "../queries/filmListQuery";
+import movieListQuery from "../queries/movieListQuery";
 
 const EpisodeTab = ({ navigation }) => {
+  const LOADING_COUNT = 10;
   const [episodeOrder, setEpisodeOrder] = useState("DESC");
 
   const toggleOrder = () => {
@@ -31,62 +34,63 @@ const EpisodeTab = ({ navigation }) => {
     return episodeOrder === "DESC" ? dateA <= dateB : dateA > dateB;
   };
 
-  const { error, data, loading } = useQuery(filmListQuery);
-  if (data && !loading) {
-    const episodeData = [...data.allFilms.films];
+  const { data, loading } = useQuery(movieListQuery, {
+    variables: { first: LOADING_COUNT, after: "" },
+  });
 
-    return (
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-          <Text style={styles.title}>Star wars movies</Text>
-          <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-        </View>
-        <View style={styles.centeredContainer}>
-          <View style={styles.episodeContainer}>
-            <TouchableOpacity
-              style={styles.sortButton}
-              onPress={() => {
-                toggleOrder();
-              }}
-            >
-              <FontAwesomeIcon
-                icon={
-                  episodeOrder === "ASC" ? faSortAmountUp : faSortAmountDown
-                }
-              />
-              <Text> Sort by Release date</Text>
-            </TouchableOpacity>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={episodeData.sort((a, b) =>
-                sortByReleaseData(a.releaseDate, b.releaseDate)
-              )}
-              contentContainerStyle={styles.episodeList}
-              style={styles.episodeList}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <EpisodeCard
-                    title={item.title}
-                    releaseDate={item.releaseDate}
-                    characters={item.characterConnection.characters}
-                    navigation={navigation}
-                  />
-                );
-              }}
+  if (!data && loading) return <Loader />;
+
+  const episodeData = [...data.allFilms.edges];
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
+        <Text style={styles.title}>Star wars movies</Text>
+        <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
+      </View>
+      <View style={styles.centeredContainer}>
+        <View style={styles.episodeContainer}>
+          <TouchableOpacity
+            style={styles.sortButton}
+            onPress={() => {
+              toggleOrder();
+            }}
+          >
+            <FontAwesomeIcon
+              icon={episodeOrder === "ASC" ? faSortAmountUp : faSortAmountDown}
             />
-          </View>
+            <Text> Sort by Release date</Text>
+          </TouchableOpacity>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={episodeData.sort((a, b) =>
+              sortByReleaseData(a.node.releaseDate, b.node.releaseDate)
+            )}
+            keyExtractor={(item) => item.node.id}
+            renderItem={({ item }) => {
+              return (
+                <EpisodeCard
+                  title={item.node.title}
+                  id={item.node.id}
+                  releaseDate={item.node.releaseDate}
+                  openingCrawl={item.node.openingCrawl}
+                  navigation={navigation}
+                />
+              );
+            }}
+          />
         </View>
       </View>
-    );
-  } else {
-    return null;
-  }
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
   titleContainer: {
     marginTop: 20,
     flexDirection: "row",
@@ -110,9 +114,6 @@ const styles = StyleSheet.create({
   episodeContainer: {
     flex: 1,
     flexDirection: "column",
-    height: "100%",
-  },
-  episodeList: {
     height: "100%",
   },
   centeredContainer: {

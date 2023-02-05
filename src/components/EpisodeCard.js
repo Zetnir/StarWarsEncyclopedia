@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const EpisodeCard = ({ title, releaseDate, characters, navigation }) => {
+const EpisodeCard = ({ title, releaseDate, openingCrawl, navigation, id }) => {
   const NUM_OF_LINES = 5;
   const [showMore, setShowMore] = useState(false);
   const [numOfLines, setNumOfLines] = useState(0);
@@ -23,8 +23,7 @@ const EpisodeCard = ({ title, releaseDate, characters, navigation }) => {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("Movie", {
-          title: title,
-          releaseDate: releaseDate,
+          id: id,
         });
       }}
     >
@@ -34,13 +33,9 @@ const EpisodeCard = ({ title, releaseDate, characters, navigation }) => {
         <Text
           numberOfLines={numOfLines}
           onTextLayout={onTextLayout}
-          style={styles.characterList}
+          style={styles.openingCrawl}
         >
-          {characters.map((character, idx) => {
-            return `${character.name}${
-              idx === characters.length - 1 ? "" : ", "
-            }`;
-          })}
+          {openingCrawl.substring(0, 51)}...
         </Text>
       </View>
     </TouchableOpacity>
@@ -58,19 +53,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 10,
     marginVertical: 10,
-    flex: 1,
+    height: 200,
     overflow: "hidden",
     backgroundColor: "lightblue",
-  },
-  image: {
-    flex: 1,
-    justifyContent: "center",
   },
   date: {
     marginLeft: 50,
   },
-  characterList: {
-    fontSize: 20,
+  openingCrawl: {
+    fontSize: 18,
     margin: 20,
     height: "100%",
     flex: 1,
