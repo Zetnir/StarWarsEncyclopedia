@@ -6,6 +6,7 @@ import {
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
 import {
   View,
@@ -46,7 +47,7 @@ const EpisodeTab = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
-        <Text style={styles.title}>STAR WARS Movies</Text>
+        <Text style={styles.title}>STAR WARS Encyclopedia</Text>
         <FontAwesomeIcon style={styles.stars} icon={faStarHalfStroke} />
       </View>
       <View style={styles.centeredContainer}>
@@ -66,7 +67,8 @@ const EpisodeTab = ({ navigation }) => {
               Sort by Release date
             </Text>
           </TouchableOpacity>
-          <FlatList
+          <FlashList
+            estimatedItemSize={485}
             showsVerticalScrollIndicator={false}
             data={episodeData.sort((a, b) =>
               sortByReleaseData(a.node.releaseDate, b.node.releaseDate)
@@ -84,6 +86,7 @@ const EpisodeTab = ({ navigation }) => {
                   openingCrawl={item.node.openingCrawl}
                   navigation={navigation}
                   image={movie.image}
+                  itemStyle={styles.movieItem}
                 />
               );
             }}
@@ -95,6 +98,14 @@ const EpisodeTab = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  movieItem: {
+    marginHorizontal: 30,
+    borderWidth: 5,
+    borderColor: COLORS.primaryColor,
+    marginVertical: 10,
+    height: 500,
+    overflow: "hidden",
+  },
   loaderContainer: {
     flex: 1,
     justifyContent: "center",

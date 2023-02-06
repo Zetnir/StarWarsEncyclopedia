@@ -9,8 +9,9 @@ import {
 } from "react-native";
 import { COLORS } from "../constants";
 
-const CharacterCard = ({ name, navigation, id }) => {
+const CharacterCard = ({ name, navigation, id, onCardTap }) => {
   const onCardPressed = () => {
+    onCardTap();
     navigation.navigate("Character", {
       id: id,
     });
@@ -38,8 +39,7 @@ const styles = StyleSheet.create({
   },
   item: {
     borderRadius: 10,
-    marginHorizontal: 10,
-    marginVertical: 10,
+    margin: 10,
     height: 120,
     width: 250,
     alignItems: "center",

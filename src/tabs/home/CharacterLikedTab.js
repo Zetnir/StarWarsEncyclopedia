@@ -1,3 +1,4 @@
+import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -12,28 +13,36 @@ const CharacterLikedTab = ({ navigation }) => {
     setCharacters(store.getState().characterLikedReducer.value);
   });
 
-  // const characters = store.getState().characterLikedReducer.value;
-
   return (
-    <View>
+    <View style={{ flex: 1, alignItems: "center" }}>
       <Text style={styles.title}>Favorite characters</Text>
       <View style={styles.container}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={characters}
-          contentContainerStyle={styles.characterContainer}
-          style={styles.characterContainer}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => {
-            return (
-              <CharacterCard
-                id={item.id}
-                name={item.name}
-                navigation={navigation}
-              />
-            );
-          }}
-        />
+        {characters.length > 0 ? (
+          <FlashList
+            estimatedItemSize={485}
+            showsVerticalScrollIndicator={false}
+            data={characters}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => {
+              return (
+                <CharacterCard
+                  id={item.id}
+                  name={item.name}
+                  navigation={navigation}
+                  onCardTap={() => {}}
+                />
+              );
+            }}
+          />
+        ) : (
+          <Text
+            style={{
+              color: COLORS.primaryTextColor,
+            }}
+          >
+            You have no characters liked
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -49,10 +58,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   container: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  characterContainer: {
+    width: 270,
     height: "100%",
   },
 });

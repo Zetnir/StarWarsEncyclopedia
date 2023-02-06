@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartFilled } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
 import {
   View,
@@ -18,8 +19,9 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
+import EpisodeCard from "../components/EpisodeCard";
 import Loader from "../components/Loader";
-import { COLORS } from "../constants";
+import { COLORS, movieImages } from "../constants";
 import characterDetailsQuery from "../queries/characterDetailsQuery";
 import {
   addCharacter,
@@ -57,8 +59,10 @@ const CharacterScreen = ({ navigation, route }) => {
   });
 
   const onMoviePressed = (id) => {
+    const movie = movieImages.find((movie) => movie.id == id);
     navigation.navigate("Movie", {
       id: id,
+      image: movie.image,
     });
   };
 
@@ -99,37 +103,18 @@ const CharacterScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.statsContainer}>
           <Text style={styles.statsTitle}> Character Informations</Text>
-          <Text style={styles.stats}>
-            Mass : {`${data.person.mass ? data.person.mass + "kg" : "unknown"}`}
-          </Text>
+          <Text style={styles.stats}>Birth Year : {data.person.birthYear}</Text>
           <Text style={styles.stats}>
             Height :{" "}
             {`${data.person.height ? data.person.height + "cm" : "unknown"}`}
           </Text>
-          <Text style={styles.stats}>Birth Year : {data.person.birthYear}</Text>
           <Text style={styles.stats}>
-            Home planet : {data.person.homeworld.name}
+            Mass : {`${data.person.mass ? data.person.mass + "kg" : "unknown"}`}
           </Text>
-          <View>
-            <Text style={styles.movieListTitle}>Appear in</Text>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={movieList}
-              keyExtractor={(item) => item.node.id}
-              renderItem={({ item }) => {
-                return (
-                  <TouchableOpacity
-                    onPress={() => {
-                      onMoviePressed(item.node.id);
-                    }}
-                    style={{ width: 300 }}
-                  >
-                    <Text style={styles.movieLink}>- {item.node.title}</Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          </View>
+          <Text style={styles.stats}>
+            Homeworld : {data.person.homeworld.name}
+          </Text>
+
           <View pointerEvents="box-none" style={styles.animationContainer}>
             <Animated.View style={[styles.animatedLike, animatedStyles]}>
               <FontAwesomeIcon
@@ -139,6 +124,32 @@ const CharacterScreen = ({ navigation, route }) => {
               />
             </Animated.View>
           </View>
+        </View>
+        <View>
+          <Text style={styles.movieListTitle}>Appears in</Text>
+          <FlashList
+            horizontal
+            estimatedItemSize={485}
+            showsHorizontalScrollIndicator={false}
+            data={movieList}
+            keyExtractor={(item) => item.node.id}
+            renderItem={({ item }) => {
+              const movie = movieImages.find(
+                (movie) => movie.id == item.node.id
+              );
+              return (
+                <EpisodeCard
+                  title={item.node.title}
+                  id={item.node.id}
+                  releaseDate={item.node.releaseDate}
+                  openingCrawl={""}
+                  navigation={navigation}
+                  image={movie.image}
+                  itemStyle={styles.movieItem}
+                />
+              );
+            }}
+          />
         </View>
         <View style={styles.likeButton}>
           <TouchableOpacity
@@ -160,6 +171,15 @@ const CharacterScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: { height: "100%" },
+  movieItem: {
+    marginHorizontal: 10,
+    borderWidth: 5,
+    borderColor: COLORS.primaryColor,
+    marginVertical: 10,
+    height: 300,
+    width: 200,
+    overflow: "hidden",
+  },
   animationContainer: {
     paddingLeft: 30,
     width: "100%",
@@ -211,8 +231,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 10,
+    marginLeft: 10,
     marginTop: 20,
-    color: COLORS.primaryColor,
+    color: COLORS.primaryTextColor,
   },
   movieLink: {
     padding: 10,

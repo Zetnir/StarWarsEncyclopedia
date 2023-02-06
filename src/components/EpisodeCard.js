@@ -16,9 +16,9 @@ const EpisodeCard = ({
   navigation,
   id,
   image,
+  itemStyle,
 }) => {
   const NUM_OF_LINES = 5;
-  const [showMore, setShowMore] = useState(false);
   const [numOfLines, setNumOfLines] = useState(0);
 
   const onTextLayout = useCallback((e) => {
@@ -36,7 +36,7 @@ const EpisodeCard = ({
         });
       }}
     >
-      <View style={styles.item}>
+      <View style={itemStyle}>
         <Image
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: COLORS.innerCardColor,
     bottom: 0,
+    width: "100%",
     height: 170,
   },
 });

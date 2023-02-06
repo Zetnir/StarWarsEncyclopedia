@@ -19,6 +19,8 @@ const characterDetailsQuery = gql`
           node {
             title
             id
+            releaseDate
+            openingCrawl
           }
         }
       }

@@ -13,6 +13,8 @@ import store from "./src/store/store";
 import { COLORS } from "./src/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useState } from "react";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,21 +52,74 @@ export default function App() {
             screenOptions={{
               headerStyle: { backgroundColor: COLORS.secondaryBgColor },
               headerTitleStyle: { color: COLORS.disableTextColor },
-              headerTitle: (props) => {
-                if (props.children === "Home") {
+            }}
+          >
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={({ navigation, route }) => ({
+                headerTitle: (props) => {
                   return (
                     <FontAwesomeIcon
                       icon={faHome}
                       color={COLORS.primaryTextColor}
                     />
                   );
-                }
-              },
-            }}
-          >
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Character" component={CharacterScreen} />
-            <Stack.Screen name="Movie" component={MovieScreen} />
+                },
+              })}
+            />
+            <Stack.Screen
+              name="Character"
+              component={CharacterScreen}
+              options={({ navigation, route }) => ({
+                headerRight: (props) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("Home");
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faHome}
+                        size={20}
+                        style={{ marginRight: 10 }}
+                        color={COLORS.primaryColor}
+                      />
+                    </TouchableOpacity>
+                  );
+                },
+                headerStyle: {
+                  height: 1,
+                  backgroundColor: COLORS.secondaryBgColor,
+                },
+              })}
+            />
+            <Stack.Screen
+              name="Movie"
+              component={MovieScreen}
+              options={({ navigation, route }) => ({
+                headerRight: (props) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("Home");
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faHome}
+                        size={20}
+                        style={{ marginRight: 10 }}
+                        color={COLORS.primaryColor}
+                      />
+                    </TouchableOpacity>
+                  );
+                },
+                headerStyle: {
+                  height: 1,
+                  backgroundColor: COLORS.secondaryBgColor,
+                },
+              })}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </ApolloProvider>
