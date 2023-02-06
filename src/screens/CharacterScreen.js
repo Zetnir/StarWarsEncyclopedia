@@ -3,7 +3,7 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartFilled } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { FlashList } from "@shopify/flash-list";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -31,15 +31,20 @@ import store from "../store/store";
 
 const CharacterScreen = ({ navigation, route }) => {
   const characterID = route.params.id;
-  const [liked, setLiked] = useState(
-    store.getState().characterLikedReducer.value !== []
-      ? store
-          .getState()
-          .characterLikedReducer.value.find(
-            (character) => character.id === characterID
-          ) !== undefined
-      : false
-  );
+
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    setLiked(
+      store.getState().characterLikedReducer.value !== []
+        ? store
+            .getState()
+            .characterLikedReducer.value.find(
+              (character) => character.id === characterID
+            ) !== undefined
+        : false
+    );
+  });
 
   const characterLiked = useSelector(
     (state) => state.characterLikedReducer.value
